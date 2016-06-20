@@ -17,20 +17,13 @@ int reverse(int x) {
      
      int mod = x%10;
      printf("%d\n",res);
-     printf("%d\n",x);
-     /* this part is to include the overflow case
-     if (res>0){
-       if ((INT_MAX/res) < 10)
+     printf("%d\n",mod);
+     if (res!=0){
+       if ((INT_MAX/abs(res)) < 10)
          {
           res =0;
           break;
          }     
-      }else if (res < 0){
-          if ((INT_MIN/res) < 10)
-         {
-          res =0;
-          break;
-         } 
       }
     res=res*10 + mod ;
     x=x/10;
@@ -39,7 +32,3 @@ int reverse(int x) {
  return res;
  
 }
- return res;
-
-}
- 
