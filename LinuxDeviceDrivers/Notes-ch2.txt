@@ -1,0 +1,32 @@
+- Things to remember while writing modules
+  1. mandatory headers 
+    -#include <linux/init.h> // this contains macros
+    - #include <linux/module.h> // this is to  include certain symbols or preprocessor macros to let the kernel know that is module and 
+      not a regular executable, which is being built.
+      
+  2. printk(KERN_ALERT "Hello, world\n");
+        Note here, there is no ' , ' between KERN_ALERT and the print message. printk is the kernel version of printf.
+    
+  3. Every module needs atleast 2 functions : <module_name >_init and <module_name>_exit
+         also the following lines must be mandatorily (So far) included. Example refernce Hello_init and hello_exit from the hello world module.
+            module_init(hello_init);
+            module_exit(hello_exit);
+            also this one:  MODULE_LICENSE("Dual BSD/GPL");
+            
+  4. PRINTK and the debug messages from stack overflow:[Link text](http://unix.stackexchange.com/questions/205883/understand-logging-in-linux)
+  The kernel logs messages (using the printk() function) to a ring buffer in kernel space. (KERN_ALERT is a log level indicating the
+    severity of the event, for which the logging was done. these macros can be found in kern_levels.h
+  These messages are made available to user-space applications in two ways: via the /proc/kmsg file 
+  (provided that /proc is mounted), and via the sys_syslog syscall.There are two main applications that 
+  read (and, to some extent, can control) thekernel's ring buffer: dmesg(1) and klogd(8). The former is 
+  intended to be run on demand by users, to print the contents of the ring buffer. The latter is a daemon 
+  that reads the messages from /proc/kmsg (or calls sys_syslog, if /proc is not mounted) and sends them to syslogd(8),
+  or to the console. That covers the kernel side.
+
+In user space, there's syslogd(8). This is a daemon that listens on a number of UNIX domain sockets (mainly /dev/log, 
+but others can be configured too), and optionally to the UDP port 514 for messages. It also receives messages from klogd(8) 
+(syslogd(8) doesn't care about /proc/kmsg). It then writes these messages to some files in /log, or to named pipes, or sends
+them to some remote hosts (via the syslog protocol, on UDP port 514), as configured in /etc/syslog.conf.
+
+
+5.
