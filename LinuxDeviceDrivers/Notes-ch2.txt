@@ -8,6 +8,7 @@
         Note here, there is no ' , ' between KERN_ALERT and the print message. printk is the kernel version of printf.
     
   3. Every module needs atleast 2 functions : <module_name >_init and <module_name>_exit
+         The Init fucntion must iitialize the module (allocate memory etc) and the exit function must do clean up, like freeing memory  etc.
          also the following lines must be mandatorily (So far) included. Example refernce Hello_init and hello_exit from the hello world module.
             module_init(hello_init);
             module_exit(hello_exit);
@@ -29,4 +30,37 @@ but others can be configured too), and optionally to the UDP port 514 for messag
 them to some remote hosts (via the syslog protocol, on UDP port 514), as configured in /etc/syslog.conf.
 
 
-5.
+5.A module tuns in the kernel mode(space) and not the user mode(space)
+
+6. Linux kernel code, including driver code, must be reentrant—it must be
+capable of running in more than one context at the same time.
+
+7.A common mistake made by driver programmers is to assume that concurrency is
+not a problem as long as a particular segment of code does not go to sleep (or
+“block”). Even in previous kernels (which were not preemptive), this assumption
+was not valid on multiprocessor systems.
+
+8.  The Current  process Global variable/pointer.
+Kernel code canrefer to the current process by accessing the global item current, defined in <asm/
+current.h>, which yields a pointer to struct task_struct, defined by <linux/sched.h>.
+The current pointer refers to the process that is currently executing. During the exe-
+cution of a system call, such as open or read, the current process is the one that
+invoked the call. Kernel code can use process-specific information by using current,
+if it needs to do so. An example of this technique is presented in Chapter 6.
+
+9. Building modules:
+    - Once you have everything set up, creating a makefile for your module is straightfor-
+      ward. In fact, for the “hello world” example shown earlier in this chapter, a single
+      line will suffice:
+      obj-m := hello.o
+    - if, instead, you have a module called module.ko that is generated from two source
+      files (called, say, file1.c and file2.c), the correct incantation would be:
+      obj-m := module.o
+      module-objs := file1.o file2.o
+    - Note: When I created the Hello world module. I created it in a arbitrary folder in ~/Documents
+      then in the same directory I created a Makefile with the obj-m := hellomodule.o. 
+      The folder contains hello.c while the Makefile contains, hello.o the make utility knows that the objecty file being
+      created is for the hello.c file. the output of make is a hello.ko file. which is then used with insmod as argument.
+    - sudo insmod ./hello.ko --> loads themodule
+    - sudo  rmmod hello
+    - to check  if your module is inserted do a cat /proc/modules | grep hello(modulename)
