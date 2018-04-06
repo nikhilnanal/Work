@@ -1,3 +1,2 @@
 # Work
-My Programs on
-Data Structures and Algorithms using C/C++.
+The Work folder contains all my personal Programming Projects and Assignments/Exercises.
