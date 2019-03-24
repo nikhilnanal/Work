@@ -1,0 +1,148 @@
+#include <iostream>
+
+using namespace std;
+
+class Node {
+   
+    int key;
+    int value;
+    Node* next;
+    Node* prev;
+    
+    Node(int k, int v){
+        key =k;
+        value = v;
+        next = NULL;
+        prev= NULL;
+    }
+}
+class DoublyLinkedList  {
+    
+    Node* front;
+    Node* rear;
+    int size;
+    int capacity;
+    
+    DoublyLinkedList(int cap){
+        front = NULL;
+        rear = NULL;
+        capacity = cap;
+    }
+    
+    bool isDllFull() {
+        return size == capacity;
+    }
+    void  move2head(Node* N){
+        if ((N  == front) && (N ==NULL))
+            return;
+        else {
+            if (N == rear) {
+                rear->prev->next = rear->next;
+                rear = rear->prev;
+            }
+            else{
+                N->prev->next = N->next;
+                N->next->prev= N->prev;
+            }
+            N->prev = NULL;
+            N->next = front;
+            font->prev = N;
+            front = N;
+        }
+            
+    }
+    void insertAtHead(Node* N) {
+        if (front== NULL && rear == NULL ){
+            front = N;
+            rear = N;
+        }
+        else if (N == front){
+            return;
+        }
+        else {
+            N->next = front;
+            front->prev = N;
+            front = N;
+            size++;
+        }
+    }
+    
+    Node* getRear(){
+        if (!rear) return NULL;
+        else
+            return rear;
+    }
+    void removeDllTail(){
+        Node* temp ;
+        if (!rear) return;
+        if (rear != front) {
+            rear->prev->next = rear->next;
+            temp = rear;
+            rear = rear->prev;
+            delete temp; 
+        }
+        else{
+            delete rear;
+            rear= NULL;
+            front = NULL;
+        }
+        size--;
+           
+        
+        
+    }
+    
+}
+
+class LRUcache {
+    
+    DoublyLinkedList *dll = new DoublyLinkedList();
+    unordered_map<int, Node*> umap;
+    
+    int get(int key){
+          unordered_map<int, Node*>:: iterator got = umap.find(key);
+          if (got != umap.end()){
+              dll->move2head(got->second);
+              return got->first;
+          }
+          else{
+              return -1;
+              }
+          }
+        
+    }
+    void put(int key, int value){
+        unordered_map<int, Node*>:: iterator got = umap.find(key);
+         if (got != umap.end()){
+              got->second->value = value;
+              dll->move2head(got->second);
+          }
+         else{
+             // the value does not exist in the cache. so we have to add it to the hash map and dll
+             // but if the dll is full we must first evict one node from the dll. and also replace that
+             // in the hashtable
+             if (dll->isDllFull()) {
+                 Node* tail = dll->getDllTail();
+                 if (!tail){
+                 got->first = tail->key;
+                 dll->removeDllTail();
+                 umap.erase(got->first);
+                 }
+             }
+             Node newnode =  new Node(key, value);
+             umap[key] = newnode;
+             dll->insertAtHead(umap[key]);
+         }
+        
+    }
+    
+    
+    
+}
+
+int main()
+{
+    cout<<"Hello World";
+
+    return 0;
+}
